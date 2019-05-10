@@ -57,10 +57,9 @@ class Barcode(Image):
     def __repr__(self):
         return "Barcode(code=" + repr(self.code) + ",\n" \
                "     center=" + str(self.center) + ",\n" \
-               "     size=" + repr(self.size) + ",\n" \
+               "     size=" + repr(self.img_size) + ",\n" \
                "     angle=" + repr(self.angle) + ",\n" \
                "     box=" + re.sub("[ \n\r]", '', repr(self.box)) + ")"
-
 
 
 class Category:
@@ -88,4 +87,3 @@ class CategoryBase:
 
     def add(self, category: Category):
         self.categories.append(category)
-

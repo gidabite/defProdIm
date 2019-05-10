@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import os
 import logging
 import cv2 as cv
@@ -46,28 +44,19 @@ def detect_items(img_path, cb: CategoryBase, config=None):
     items = search_items(img, config)
     if text_log:
         logger.info("Module SEARCH_ITEMS found " + str(len(items)) + " objects")
-    dict_items = []
     for item in items:
-
         if text_log:
             logger.info("Module SEARCH_BARCODE started on " + repr(item.name))
 
         if search_barcode_enabled:
             item = search_barcode_item(item, config)
-            if text_log:
-                if item.barcode.code is not None:
-                    logger.info("Module SEARCH_BARCODE found barcode " + str(item.barcode.code) + " on " + item.name)
-                else:
-                    logger.info("Module SEARCH_BARCODE not found barcode on " + item.name)
 
         if search_color_enabled:
             item = search_color_item(item, config)
 
         if search_size_enabled:
             item = search_size_item(item, config)
-
-        dict_items.append(item)
+        item = classify(item, cb)
     if text_log:
         logger.info("Processing the image is complete")
-    dict_items = classify(dict_items, cb)
-    return dict_items
+    return items

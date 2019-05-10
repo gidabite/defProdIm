@@ -1,4 +1,3 @@
-import datetime
 import configparser as cp
 import os
 
@@ -6,13 +5,11 @@ default_path = "config.ini"
 
 
 def get_config(path=None):
-    config = None
+    config = cp.ConfigParser()
     if path is not None:
-        config = cp.ConfigParser()
         config.read(path)
     else:
         if not os.path.exists(default_path):
-            config = cp.ConfigParser()
 
             config["General"] = {
                 "threshold_ration": "2.0"
@@ -41,8 +38,7 @@ def get_config(path=None):
 
             config["Color"] = {
                 "enabled": "True",
-                "count_area": 10,
-                "count_samples": 100
+                "count_samples": 1000
             }
 
             config["Size"] = {
@@ -56,6 +52,5 @@ def get_config(path=None):
             with open(default_path, "w") as config_file:
                 config.write(config_file)
 
-        config = cp.ConfigParser()
         config.read(default_path)
     return config
