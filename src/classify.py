@@ -91,7 +91,7 @@ def classify(item, cb, config=None):
         return item
     if search_size_enabled:
         count_methods += 1
-        proximity += classify_size(items[i], cb)
+        proximity += classify_size(item, cb)
     proximity /= count_methods
     item.cl = sorted(list(zip(cb.categories, proximity.round(3))), key=lambda x: x[1], reverse=True)
     return item

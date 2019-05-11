@@ -54,26 +54,22 @@ def search_items(img, config=None):
 
     logging_action("3-gray", gray)
 
-    gaussian = cv.GaussianBlur(gray, gaussian_kernel, 0)
-
-    logging_action("4-gaussian", gaussian)
-
-    v = np.median(gaussian)
+    v = np.median(gray)
 
     # apply automatic Canny edge detection using the computed median
     lower = int(max(0, (1.0 - sigma) * v))
     upper = int(min(255, (1.0 + sigma) * v))
 
-    edged = cv.Canny(gaussian, lower, upper)
+    edged = cv.Canny(gray, lower, upper)
 
-    logging_action("5-edged", edged)
+    logging_action("4-edged", edged)
 
     kernel = cv.getStructuringElement(cv.MORPH_RECT, close_kernel)
     closed = cv.morphologyEx(edged, cv.MORPH_CLOSE, kernel)
 
-    logging_action("6-closed", closed)
+    logging_action("5-closed", closed)
 
-    contours0, hierarchy = cv.findContours(closed.copy(), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+    contours0, hierarchy = cv.findContours(closed.copy(), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_TC89_L1)
     total = 0
     # цикл по контурам
     for cnt in contours0:
@@ -92,12 +88,12 @@ def search_items(img, config=None):
                 logger.info("Object " + repr("item_" + str(total)) + " found: " + repr(rect))
             logging_action("item_" + str(total), img_crop)
             if img_log:
-                cv.drawContours(img, [box], 0, (255, 0, 0), 2)
+                cv.drawContours(img, [cnt * int(1/image_scale_factor)], 0, (255, 0, 0), 2)
 
             items.append(Item("item_" + str(total), rect, box, img_crop))
             total = total + 1
 
-    logging_action("7-dist", img)
+    logging_action("6-dist", img)
     if img_log:
         cv.waitKey()
         cv.destroyAllWindows()
