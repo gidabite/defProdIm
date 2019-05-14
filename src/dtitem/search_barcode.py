@@ -47,31 +47,26 @@ def search_barcode_item(item, config = None):
 
     logging_action("2-dx.jpg", grad_x)
 
-    grad_y = cv.Sobel(gray, ddepth=cv.CV_32F, dx=0, dy=1, ksize=-1)
 
-    logging_action("3-dy.jpg", grad_y)
-
-    # subtract the y-gradient from the x-gradient
-    #gradient = cv.subtract(grad_x, grad_y)
     gradient = cv.convertScaleAbs(grad_x)
 
-    logging_action("4-gradient.jpg", gradient)
+    logging_action("3-gradient.jpg", gradient)
 
     blurred = cv.GaussianBlur(gradient, (1, 45), 0)
     (_, thresh) = cv.threshold(blurred, 225, 255, cv.THRESH_BINARY)
 
-    logging_action("5-thresh.jpg", thresh)
+    logging_action("4-thresh.jpg", thresh)
 
     # construct a closing kernel and apply it to the thresholded image
     kernel = cv.getStructuringElement(cv.MORPH_RECT, (17, 1))
     closed = cv.morphologyEx(thresh, cv.MORPH_CLOSE, kernel)
 
-    logging_action("6-closed.jpg", closed)
+    logging_action("5-closed.jpg", closed)
 
     closed = cv.erode(closed, None, iterations=4)
     closed = cv.dilate(closed, None, iterations=4)
 
-    logging_action("7-dilate.jpg", closed)
+    logging_action("6-dilate.jpg", closed)
 
     (cnts, _) = cv.findContours(closed.copy(), cv.RETR_EXTERNAL,
                                 cv.CHAIN_APPROX_SIMPLE)
@@ -95,11 +90,11 @@ def search_barcode_item(item, config = None):
 
     img_crop = crop_rect(item.img, max_rect)
 
-    logging_action("barcode.jpg", img_crop)
+    logging_action("7-barcode.jpg", img_crop)
 
     barcode = decode(img_crop,  symbols=[ZBarSymbol.EAN13])
 
-    logging_action("dest.jpg", img_copy)
+    logging_action("8-dest.jpg", img_copy)
     if show_img:
         cv.waitKey()
         cv.destroyAllWindows()
